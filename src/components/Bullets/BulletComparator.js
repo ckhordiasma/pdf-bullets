@@ -41,7 +41,7 @@ export default function BulletComparator({
       const contentState = newEditorState.getCurrentContent();
       if (enableHighlight === true) {
         let bulletText = contentState.getPlainText();
-        let userInput = bulletText.split(/\s|;|--|\//);
+        let userInput = bulletText.split(/\s|;|--|\//).map(word => word.toLowerCase());
         let findDuplicates = userInput => userInput.filter((item, index) => (userInput.indexOf(item) !== index && item.length > 1));
         let duplicates = findDuplicates(userInput);
         duplicates = [...new Set(duplicates)];
@@ -51,7 +51,7 @@ export default function BulletComparator({
           console.log(yellowSpans);
           console.log(e.target);
           for (let span of yellowSpans) {
-            if (e.target.innerText == span.outerText) {
+            if (e.target.innerText.toLowerCase() == span.outerText.toLowerCase()) {
               if (span.style.background == 'yellow') {
                 span.style.background = 'LawnGreen';
               } else {
@@ -68,10 +68,10 @@ export default function BulletComparator({
         function findWithRegex(duplicates, contentBlock, callback) {
           const text = contentBlock.getText();
           const duplicatesMinusStopWords = new Set(duplicates).difference(stopWords);
-        
+          console.log(duplicatesMinusStopWords)
           duplicatesMinusStopWords.forEach(word => {
             // use global (g) and case insensitive (i) match
-            let re = new RegExp(String.raw`\s${word}\s`, "gi");
+            let re = new RegExp(String.raw`\b${word}\b`, "gi");
             const matches = [...text.matchAll(re)];
             matches.forEach(match =>
               callback(match.index, match.index + match[0].length)

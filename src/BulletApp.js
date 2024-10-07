@@ -187,10 +187,9 @@ function BulletApp({enableHighlight, onHighlightChange}) {
       function findWithRegex(duplicates, contentBlock, callback) {
         const text = contentBlock.getText();
         const duplicatesMinusStopWords = new Set(duplicates).difference(stopWords);
-      
         duplicatesMinusStopWords.forEach(word => {
           // use global (g) and case insensitive (i) match
-          let re = new RegExp(String.raw`\s${word}\s`, "gi");
+          let re = new RegExp(String.raw`\b(${word})\b`, "gi");
           const matches = [...text.matchAll(re)];
           matches.forEach(match =>
             callback(match.index, match.index + match[0].length)
